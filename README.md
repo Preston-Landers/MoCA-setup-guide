@@ -11,11 +11,11 @@ Copyright 2025 Preston Landers and licensed under [MIT License](./LICENSE).
 
 ## Quick Start (TL;DR)
 
-1. Buy GoCoax MA2500D adapters (one per location).
+1. Buy goCoax MA2500D adapters (one per location).
 2. Install a MoCA PoE filter at your cable service entry point.
 3. Replace old splitters with MoCA-compatible ones.
 4. Test cable continuity before assuming dead outlets.
-5. If internet dies when MoCA activates, add second PoE filter at modem.
+5. If internet dies when MoCA activates, add a second PoE filter at the modem.
 
 ## Overview
 
@@ -38,6 +38,18 @@ repair it before I could achieve the performance I wanted. I hope this guide
 will help you avoid some of those pitfalls and get the most out of your MoCA
 setup.
 
+## Why MoCA?
+
+Do you get gigabit fiber to the home, but struggle with delivering all that
+speed to your endpoint devices such as PCs, laptops, game consoles, etc? Mesh
+WiFi networks are often a solution but can be expensive, and almost never
+deliver the kind of rock-solid low-latency connection needed for competitive
+gaming. MoCA uses your existing cable TV wiring to enable a very high
+performance local network without needing to run new ethernet cables through
+walls or ceilings. Even if many or most of your devices still use WiFi, you can
+often benefit by moving your most performance sensitive devices like PCs onto a
+wired network, freeing up WiFi bandwidth for other devices.
+
 ### What is MoCA?
 
 MoCA (Multimedia over Coax Alliance) allows you to create a high-speed ethernet
@@ -54,7 +66,7 @@ bandwidth across your network.
     number of nodes, the quality of the wiring, interference from neighbors, and
     other factors.
 - **Improvement over Powerline**: 23x faster.
-- **Packet Loss**: Zero retransmissions during testing.
+- **Packet Loss**: Zero retransmissions during my testing.
 
 ## Equipment Used
 
@@ -62,7 +74,7 @@ Prices were on Amazon US as of May 2025.
 
 ### MoCA Adapters
 
-- **GoCoax MA2500D** (MoCA 2.5 with 2.5GbE ports) - ~$65 each
+- **goCoax MA2500D** (MoCA 2.5 with 2.5GbE ports) - ~$65 each
   - You'll want one for each location or room that has a coax outlet and needs
     ethernet connectivity.
   - You can use a small switch in each room to connect multiple devices to each
@@ -116,7 +128,7 @@ date to avoid any bottlenecks or performance issues:
 
 **Find your cable demarcation box** (usually outside):
 
-TODO: insert photo here
+![Cable demarcation box](./images/cable_demarcation_box.jpg)
 
 - Look for where cable/internet enters your house.
   - This may be a small outdoor box or a wall plate inside.
@@ -133,7 +145,8 @@ TODO: insert photo here
 
 The goal here is to understand which outlet within your home connects to which
 home run cable. This will help you plan where to install MoCA adapters and
-prevents surprises during installation.
+prevents surprises during installation. This is also an ideal time to label your
+home run cables if they are not already labeled.
 
 Use a coax cable tester with a tone generator. You connect the tone generator to
 a cable at your central distribution box, then take the separate probe/wand to
@@ -160,9 +173,10 @@ outlets to the home run cable behind them.
 
 My initial testing with the tone generator produced some puzzling results with
 most of the house looking dead, until I finally thought to open up and check
-behind the wall outlets. There were also unterminated cables at the outdoor
-cable demarcation box, so I also had to add RG6 connectors there in order to
-hook them up to the splitter.
+behind the wall outlets. There were also two unterminated home run cables at the
+outdoor cable demarcation box, so I also had to add RG6 connectors there in
+order to hook them up to the splitter. The coax crimping tool came in handy
+here.
 
 ### 2. Check Existing Equipment
 
@@ -187,12 +201,15 @@ grounding points, so don't assume they're MoCA PoE filters.
 Make sure to install a MoCA PoE filter at the point where the cable enters your
 home. This filter prevents your MoCA signals from leaking to your neighbors, or
 their MoCA signals from interfering with yours. It's critical that you have a
-PoE filter installed before any MoCA devices in your home network.
+PoE filter installed before any MoCA devices in your home network. It should be
+installed at the main cable entry point before any splitters out to your home
+runs.
 
-It should be installed at the main cable entry point before any splitters out to
-your home runs.
+If for some reason you are unable to install a PoE filter, it is critical that
+you [enable MoCA encryption](#moca-encryption) on your MoCA adapters to prevent
+any potential interference or security issues.
 
-TODO: insert photo here
+![Outdoor splitter with PoE Filter](./images/outside_splitter.jpg)
 
 **Signal flow**: `Street → PoE Filter → MoCA Splitter → Home Runs`
 
@@ -245,7 +262,7 @@ Installing a PoE filter between the cable modem and the MoCA adapter completely
 resolved this issue. I theorized that the nearby MoCA adapter became too "loud"
 for the cable modem to handle, and the PoE filter eliminated that signal.
 
-TODO: insert photo here
+![PoE filter at cable modem](./images/indoor_splitter.jpg)
 
 #### In other rooms
 
@@ -255,6 +272,22 @@ connect it directly to the MoCA adapter's ethernet port. Otherwise, you'll want
 to connect a small switch to the MoCA adapter to provide additional ports. It's
 worth investing in a quality 2.5GbE switch for this purpose; cheaper switches
 can bottleneck performance or cause instability.
+
+#### MoCA Encryption
+
+Many MoCA adapters including the goCoax MA2500D support MoCA encryption, which
+adds an extra layer of security to your network. Typically this is not turned on
+by default, and sometimes you have to enable it manually in the adapter's web
+interface. If you are concerned about security, especially if you live in a
+multi-unit building such as an apartment complex or don't have access to the
+cable splits, consider enabling this feature. In theory, a PoE filter should
+prevent any MoCA signals from leaking outside your home, but enabling encryption
+adds an extra layer of protection.
+
+However, if you operate a MoCA network in a typical detached single-family home,
+and have properly installed a PoE filter at the point of entry, you probably do
+not need or want to enable encryption. It can slightly degrade performance and
+adds additional complexity to your setup.
 
 ### Step 4: Terminate Unused Ports
 
