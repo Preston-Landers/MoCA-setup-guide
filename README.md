@@ -11,11 +11,43 @@ Copyright 2025 Preston Landers and licensed under [MIT License](./LICENSE).
 
 ## Quick Start (TL;DR)
 
-1. Buy goCoax MA2500D adapters (one per location).
+1. Buy MoCA 2.5 adapters - one per room (plus router). I had good results with
+   goCoax MA2500D.
 2. Install a MoCA PoE filter at your cable service entry point.
 3. Replace old splitters with MoCA-compatible ones.
 4. Test cable continuity before assuming dead outlets.
 5. If internet dies when MoCA activates, add a second PoE filter at the modem.
+
+## Table of contents
+
+- [Overview](#overview)
+- [Why MoCA?](#why-moca)
+- [Equipment Used](#equipment-used)
+  - [MoCA Adapters](#moca-adapters)
+  - [Infrastructure Components](#infrastructure-components)
+  - [Network Equipment](#network-equipment)
+- [Pre-Installation Planning](#pre-installation-planning)
+  - [1. Assess Your Coax Infrastructure](#1-assess-your-coax-infrastructure)
+  - [2. Check Existing Equipment](#2-check-existing-equipment)
+- [Installation Process](#installation-process)
+  - [Step 1: Install PoE Filter](#step-1-install-poe-filter)
+  - [Step 2: Upgrade Splitters](#step-2-upgrade-splitters)
+  - [Step 3: Install MoCA Adapters](#step-3-install-moca-adapters)
+  - [Step 4: Terminate Unused Ports](#step-4-terminate-unused-ports)
+- [Key Lessons Learned](#key-lessons-learned)
+  - [1. Quality Components Matter](#1-quality-components-matter)
+  - [2. PoE Filter Placement](#2-poe-filter-placement)
+  - [3. Router Bottlenecks](#3-router-bottlenecks)
+  - [4. Network Settling Time](#4-network-settling-time)
+  - [5. Cable Mapping is Essential](#5-cable-mapping-is-essential)
+- [Troubleshooting: a real world guide](#troubleshooting-a-real-world-guide)
+  - [Problem: MoCA Adapter Light is off / no connectivity](#problem-moca-adapter-light-is-off--no-connectivity)
+  - [Problem: Internet connection drops when MoCA is active](#problem-internet-connection-drops-when-moca-is-active)
+  - [Problem: Internet speeds are slow, but MoCA speeds are fast](#problem-internet-speeds-are-slow-but-moca-speeds-are-fast)
+  - [Problem: MoCA network is unstable or has high packet loss](#problem-moca-network-is-unstable-or-has-high-packet-loss)
+- [Performance Testing](#performance-testing)
+- [Cost Breakdown](#cost-breakdown)
+- [Final Thoughts](#final-thoughts)
 
 ## Overview
 
@@ -28,7 +60,7 @@ wiring, but hopefully this guide lets you benefit from my experiences.
 My house did not come wired for ethernet, and it was impractically expensive to
 run new cables through the walls. WiFi is always an option but I prefer a
 hardline connection for reliability and performance, especially for gaming. I
-had been using AC power line adapters (TP-Link AV2000) for a while. Although it
+had been using AC powerline adapters (TP-Link AV2000) for a while. Although it
 is pretty cool that they work at all, I was only seeing about 100 to 150 Mbps
 throughput at best, which was unsatisfactory.
 
@@ -55,7 +87,8 @@ wired network, freeing up WiFi bandwidth for other devices.
 MoCA (Multimedia over Coax Alliance) allows you to create a high-speed ethernet
 network using your home's existing coaxial cable infrastructure; in other words,
 cable TV wiring. MoCA 2.5 can theoretically deliver up to 2.5 Gbps shared
-bandwidth across your network.
+bandwidth across your network. Because the bandwidth is shared, actual
+throughput will depend on the number of devices and their usage patterns.
 
 ### Performance Results
 
@@ -74,15 +107,17 @@ Prices were on Amazon US as of May 2025.
 
 ### MoCA Adapters
 
-- **goCoax MA2500D** (MoCA 2.5 with 2.5GbE ports) - ~$65 each
+- I used **goCoax MA2500D** (MoCA 2.5 with 2.5 GbE ports) - ~$65 each
   - You'll want one for each location or room that has a coax outlet and needs
-    ethernet connectivity.
+    ethernet connectivity, plus one for the router location.
   - You can use a small switch in each room to connect multiple devices to each
     MoCA adapter as needed.
+  - Any quality MoCA 2.5 adapter should work. Be sure to check for any available
+    firmware updates.
 
 ### Infrastructure Components
 
-- **MoCA PoE Filter** (PPC a BELDON Brand) - $8 each
+- **MoCA PoE Filter**. I used two by "PPC a BELDON Brand" - $8 each
   - This is a "Point of Entry" filter that makes sure MoCA signals do not leak
     outside or into your home, which is critical for security and performance.
   - Important: You might need a second one for the cable modem itself, as
@@ -92,7 +127,7 @@ Prices were on Amazon US as of May 2025.
   - **BAMF 2-Way MoCA Splitter** (5-2300MHz) - $10 - for indoor use between the
     cable modem and MoCA adapter.
     - You may need a 3 way splitter indoors if you also use traditional cable TV
-      (i.e., a separate cable TV box.)
+      (i.e., a separate cable TV box).
   - **BAMF 6-Way MoCA Splitter** (5-2300MHz) - $15 - for outdoor distribution
     box.
 - **Coax terminators** for unused ports, either on splitters or wall outlets -
@@ -115,7 +150,7 @@ date to avoid any bottlenecks or performance issues:
   - As part of this upgrade I replaced an older Netgear WAX204 with a TP-Link
     Archer GE800 with 10 Gbps and 2.5 Gbps ports, which has excellent
     performance.
-- **Quality 2.5GbE switches**
+- **Quality 2.5 GbE switches**
   - Cheap switches can definitely cause performance issues, such as a high
     number of TCP retransmits and slightly lower throughput, even if they are
     rated for 2.5 Gbps.
@@ -167,9 +202,9 @@ assuming the cable run is bad.
 When I first moved into my current house, I only used one cable outlet for the
 cable modem and never bothered to check the rest of my outlets. Then when I went
 to go set up my MoCA network I thought I had 4 dead outlets in the house and
-only 1 other outlet working. It turns out that for whatever reason, whoever did
-the wiring in this house never bothered to physically connect up the wall
-outlets to the home run cable behind them.
+only 1 other outlet working. It turns out that for whatever reason, whoever
+wired this house never bothered to physically connect up the wall outlets to the
+home run cable behind them.
 
 My initial testing with the tone generator produced some puzzling results with
 most of the house looking dead, until I finally thought to open up and check
@@ -242,7 +277,7 @@ MoCA-compatible splitter and possibly a second PoE filter.
 
 - Use 2-way splitter: one output to cable modem, one to MoCA adapter
   - If necessary, use a 3-way splitter if you also have a cable TV box.
-- Connect the MoCA adapter to a LAN port on your router or a 2.5GbE switch.
+- Connect the MoCA adapter to a LAN port on your router or a 2.5 GbE switch.
 - Connect the cable modem to the other output of the splitter, and then connect
   the modem to your router's WAN port.
 
@@ -260,7 +295,8 @@ issues, but when I added additional nodes, my cable modem would be knocked
 offline immediately as soon as the MoCA network light came on the adapter.
 Installing a PoE filter between the cable modem and the MoCA adapter completely
 resolved this issue. I theorized that the nearby MoCA adapter became too "loud"
-for the cable modem to handle, and the PoE filter eliminated that signal.
+for the cable modem to handle, and the PoE filter eliminated that signal. DOCSIS
+3.1 modems may be more susceptible to this issue due to frequency overlap.
 
 ![PoE filter at cable modem](./images/indoor_splitter.jpg)
 
@@ -270,7 +306,7 @@ Simply plug the MoCA adapter into the coax outlet in each room where you need
 ethernet connectivity. If you only have a single device to plug in, you can
 connect it directly to the MoCA adapter's ethernet port. Otherwise, you'll want
 to connect a small switch to the MoCA adapter to provide additional ports. It's
-worth investing in a quality 2.5GbE switch for this purpose; cheaper switches
+worth investing in a quality 2.5 GbE switch for this purpose; cheaper switches
 can bottleneck performance or cause instability.
 
 #### MoCA Encryption
@@ -299,7 +335,7 @@ if you have any interference issues.
 
 ### 1. Quality Components Matter
 
-**Cheap or outdated routers or 2.5GbE switches can bottleneck performance** -
+**Cheap or outdated routers or 2.5 GbE switches can bottleneck performance** -
 invest in quality network equipment.
 
 ### 2. PoE Filter Placement
@@ -390,8 +426,8 @@ the router's CPU to inspect every data packet, which can create a bottleneck on
 high-speed connections.
 
 **Solution**: First try rebooting your router or a factory reset. Upgrade your
-router to one with 2.5GbE or higher ports that is known to have good performance
-with multi-gigabit connections.
+router to one with 2.5 GbE or higher ports that is known to have good
+performance with multi-gigabit connections.
 
 ### Problem: MoCA network is unstable or has high packet loss
 
@@ -399,8 +435,8 @@ with multi-gigabit connections.
 (e.g., 1.9 Gbps) but also show a high number of TCP Retransmits (`Retr`).
 
 **Cause**: This is often caused by lower-quality endpoint equipment. As learned
-in this project, a cheap, no-name 2.5GbE switch can introduce significant packet
-loss.
+in this project, a cheap, no-name 2.5 GbE switch can introduce significant
+packet loss.
 
 **Solution**: Invest in quality networking equipment from reputable brands. A
 good switch should result in near-zero retransmits during testing.
@@ -428,9 +464,13 @@ good switch should result in near-zero retransmits during testing.
     available, and it can be run under WSL on Windows.
   - I ran the server mode on my Linux server and the client mode on my Windows
     PC to measure performance.
+  - On Linux, the server portion is generally enabled automatically when you
+    install the package, or you can run `iperf3 -s` to start it.
+  - On the client side, run `iperf3 -c <server_ip> -t 30` to test for 30
+    seconds.
 - **speedtest.net** for internet speed verification
-- Check your normal internal file transfers or your other normal network usage
-  patterns to see if you notice any improvements.
+- Check your normal internal file transfers (e.g. from a NAS server) or other
+  normal network usage patterns to see if you notice any improvements.
 
 ### Expected Results
 
