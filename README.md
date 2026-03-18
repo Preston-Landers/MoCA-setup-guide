@@ -40,9 +40,11 @@ Copyright 2025 Preston Landers and licensed under [MIT License](./LICENSE).
   - [3. Router Bottlenecks](#3-router-bottlenecks)
   - [4. Network Settling Time](#4-network-settling-time)
   - [5. Cable Mapping is Essential](#5-cable-mapping-is-essential)
+  - [6. Minimize Splitter Loss on the Cable Modem Path](#6-minimize-splitter-loss-on-the-cable-modem-path)
 - [Troubleshooting: a real world guide](#troubleshooting-a-real-world-guide)
   - [Problem: MoCA Adapter Light is off / no connectivity](#problem-moca-adapter-light-is-off--no-connectivity)
   - [Problem: Internet connection drops when MoCA is active](#problem-internet-connection-drops-when-moca-is-active)
+  - [Problem: Degraded upload speed or intermittent packet loss](#problem-degraded-upload-speed-or-intermittent-packet-loss)
   - [Problem: Internet speeds are slow, but MoCA speeds are fast](#problem-internet-speeds-are-slow-but-moca-speeds-are-fast)
   - [Problem: MoCA network is unstable or has high packet loss](#problem-moca-network-is-unstable-or-has-high-packet-loss)
 - [Performance Testing](#performance-testing)
@@ -366,6 +368,47 @@ MoCA adapters to establish connections and show the "MoCA" light before testing.
 Don't skip the cable testing phase - understanding your coax infrastructure
 prevents hours of troubleshooting.
 
+### 6. Minimize Splitter Loss on the Cable Modem Path
+
+If you have cable internet coexisting with MoCA, pay attention to how many
+splitters are between the street feed and your cable modem. Every splitter adds
+signal loss (roughly ~3.5 dB per 2-way, ~7 dB per 4-way, ~8-9 dB per 6-way,
+~10-11 dB per 8-way), and that loss accumulates. DOCSIS upstream transmitters
+have much tighter signal margins than MoCA, so a modem buried behind a main
+distribution splitter plus an indoor splitter can end up marginal — especially
+on upstream channels. MoCA, by contrast, operates at higher power levels and
+tolerates up to ~60 dB of path loss, so MoCA adapters handle extra splitter hops
+without issue.
+
+The recommended approach is to **split off the cable modem's feed before the
+main MoCA distribution splitter** using a 2-way splitter:
+
+```
+Street tap → PoE filter → 2-way splitter
+  ├── Leg 1 → Living room → 2-way splitter
+  │     ├── Cable modem (+ PoE filter if needed)
+  │     └── MoCA adapter → Router
+  └── Leg 2 → Main distribution splitter (4-way, 6-way, 8-way, etc.)
+        ├── Other rooms with MoCA adapters
+        └── (unused ports terminated)
+```
+
+This keeps the modem's total path loss low (one 2-way split plus one indoor
+split, ~7 dB) instead of running it through the main distribution splitter
+first (~12+ dB or more). The MoCA adapters are unaffected by the extra hop. I
+discovered this through real-world debugging — see the
+[troubleshooting section below](#problem-degraded-upload-speed-or-intermittent-packet-loss)
+for symptoms to watch for.
+
+Directional couplers (taps) are another option — they pass most signal through
+one port with only ~1.5 dB loss and bleed a smaller portion to the tap port.
+However, finding couplers rated above 1 GHz for MoCA compatibility is
+difficult, making the 2-way splitter approach more practical.
+
+For those who want to go deeper on diagnostics, a NanoVNA (vector network
+analyzer, ~$50-130) can measure actual insertion loss across your splitters and
+cable runs at both DOCSIS and MoCA frequencies.
+
 ## Troubleshooting: a real world guide
 
 ### Problem: MoCA Adapter Light is off / no connectivity
@@ -405,6 +448,25 @@ on the same splitter.
 **Solution**: Install a second MoCA PoE filter directly on the cable modem's
 input, as [described above](#important-second-poe-filter-at-cable-modem). This
 will prevent MoCA signals from interfering with the cable modem's operation.
+
+### Problem: Degraded upload speed or intermittent packet loss
+
+**Symptom**: Download speeds are normal but upload speeds are degraded or
+inconsistent. You may see intermittent packet loss visible on tools like
+`pathping` or `mtr`, often starting at your ISP's first hop. Upload latency on
+speed tests may be highly variable. Rebooting the cable modem temporarily
+improves things (because the modem re-ranges to different upstream channels),
+but the problem returns.
+
+**Cause**: Too much cumulative splitter loss on the cable modem's coax path. The
+DOCSIS upstream transmitter has tighter signal margins than downstream, so it
+fails first. This is especially likely if your modem sits behind both a main
+distribution splitter and an indoor splitter.
+
+**Solution**: Restructure your splitter topology to minimize the number of
+splitters between the street feed and your cable modem. See
+[Minimize Splitter Loss on the Cable Modem Path](#6-minimize-splitter-loss-on-the-cable-modem-path)
+above for the recommended approach.
 
 ### Problem: Internet speeds are slow, but MoCA speeds are fast
 
